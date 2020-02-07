@@ -1,41 +1,57 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import firebase from 'firebase'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    loadedMeetups: [
-      {
-        imgUrl: 'https://images7.alphacoders.com/853/853456.jpg',
-        id: '1',
-        title: 'Meetup in Los Santos',
-        date: {
-          day: '2020-01-01',
-          time: '12:00'
-        }
-      },
-      {
-        imgUrl: 'https://vignette.wikia.nocookie.net/dark-souls/images/8/82/Anor_Londo_%28Dark_Souls_III%29.jpg/revision/latest?cb=20161205200358&path-prefix=es',
-        id: '2',
-        title: 'Meetup in Anor Londo',
-        date: {
-          day: '2020-01-01',
-          time: '11:00'
-        }
-      }
-    ],
-    user: {
-      id: '',
-      registerMeetups: []
-    }
+    loadedMeetups: [],
+    user: null,
+    loading: false,
+    error: null
   },
   mutations: {
+    setFetchedMeetups (state, payload) {
+      state.loadedMeetups = payload
+    },
     createMeetup (state, payload) {
       state.loadedMeetups.push(payload)
+    },
+    createUser (state, payload) {
+      state.user = payload
+    },
+    setLoading (state, payload) {
+      state.loading = payload
+    },
+    setError (state, payload) {
+      state.error = payload
+    },
+    clearError (state) {
+      state.error = null
     }
   },
   actions: {
+    fetchMeetups ({ commit }) {
+      firebase.database().ref('meetups').once('value')
+        .then(data => {
+          const fetchedMeetups = []
+          const obj = data.val()
+          for (let key in obj) {
+            fetchedMeetups.push({
+              id: key,
+              title: obj[key].title,
+              description: obj[key].description,
+              imgUrl: obj[key].imgUrl,
+              date: {
+                day: obj[key].date.day,
+                time: obj[key].date.time
+              }
+            })
+          }
+          commit('setFetchedMeetups', fetchedMeetups)
+        }).catch(err => console.log(err))
+    },
     createMeetup ({ commit }, payload) {
       const meetup = {
         title: payload.title,
@@ -45,11 +61,50 @@ export default new Vuex.Store({
         date: {
           day: payload.date.day,
           time: payload.date.time
-        },
-        id: '3'
+        }
       }
-      // Reach out the firebase and store it
-      commit('createMeetup', meetup)
+      firebase.database().ref('meetups').push(meetup)
+        .then(data => {
+          commit('createMeetup', {
+            ...meetup,
+            id: data.key
+          })
+        }).catch(err => console.log(err))
+    },
+    signUserUp ({ commit }, payload) {
+      commit('setLoading', true)
+      commit('clearError')
+      firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
+        .then(res => {
+          commit('setLoading', false)
+          const newUser = {
+            id: res.user.uid,
+            registerMeetups: []
+          }
+          commit('createUser', newUser)
+        }).catch(err => {
+          commit('setLoading', false)
+          commit('setError', err)
+        })
+    },
+    signUserIn ({ commit }, payload) {
+      commit('setLoading', true)
+      commit('clearError')
+      firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
+        .then(res => {
+          commit('setLoading', false)
+          const newUser = {
+            id: res.user.uid,
+            registerMeetups: []
+          }
+          commit('createUser', newUser)
+        }).catch(err => {
+          commit('setLoading', false)
+          commit('setError', err)
+        })
+    },
+    clearError ({ commit }) {
+      commit('clearError')
     }
   },
   getters: {
@@ -65,12 +120,22 @@ export default new Vuex.Store({
     featureMeetups (state, getters) {
       return getters.loadedMeetups.slice(0, 5)
     },
+    // Find meetup by ID
     loadedMeetup (state) {
       return MeetupId => {
         return state.loadedMeetups.find(meetup => {
           return meetup.id === MeetupId
         })
       }
+    },
+    user (state) {
+      return state.user
+    },
+    loading (state) {
+      return state.loading
+    },
+    error (state) {
+      return state.error
     }
   }
 })

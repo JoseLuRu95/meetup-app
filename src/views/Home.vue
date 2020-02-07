@@ -17,6 +17,7 @@
             </v-row>
           </v-carousel-item>
         </v-carousel>
+        <v-progress-linear v-if="loading" indeterminate color="primary darken-1"></v-progress-linear>
       </v-col>
     </v-row>
   </v-container>
@@ -29,6 +30,9 @@ export default {
   computed: {
     meetups () {
       return this.$store.getters.featureMeetups
+    },
+    loading () {
+      return this.$store.getters.setLoading
     }
   },
   methods: {

@@ -2,7 +2,7 @@
   <div>
     <v-navigation-drawer app v-if="window.width < 960" v-model="showDrawer" mobile-break-point="960">
       <v-list elevation="1">
-        <v-list-item link v-for="v in views" :key="v.name" :to="{ name: v.name }" pointer>
+        <v-list-item link v-for="v in views" :key="v.name" :to="{ name: v.path }" pointer>
           <v-list-item-icon>
             <v-icon color="primary">{{ v.icon }}</v-icon>
           </v-list-item-icon>
@@ -15,9 +15,9 @@
 
     <v-app-bar app flat>
       <v-app-bar-nav-icon class="primary--text ml-1 d-md-none" @click.stop="showDrawer = !showDrawer"/>
-      <v-toolbar-title>Meeting App</v-toolbar-title>
+      <v-toolbar-title><v-btn text :to="{ name: 'Home'}">Meeting App</v-btn> </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn v-for="v in views" :key="v.name" class="mx-1 d-none d-md-flex" color="secondary" text small :to="{ name: v.name }">
+      <v-btn v-for="v in views" :key="v.name" class="mx-1 d-none d-md-flex" color="secondary" text small :to="{ name: v.path }">
         <v-icon class="mr-2">{{ v.icon }}</v-icon>
         {{ v.name }}
       </v-btn>
@@ -36,15 +36,27 @@ export default {
         width: 0
       },
       btnDisabled: false,
-      showDrawer: false,
-      views: [
-        { name: 'Home', icon: 'fas fa-home' },
-        { name: 'Meetups', icon: 'fas fa-users' },
-        { name: 'CreateMeetup', icon: 'fas fa-plus' },
-        { name: 'Profile', icon: 'fas fa-user' },
-        { name: 'Signin', icon: 'fas fa-sign-in-alt' },
-        { name: 'Signup', icon: 'fas fa-sign-out-alt' }
+      showDrawer: false
+    }
+  },
+  computed: {
+    // Define which views print when there is a user sign up or not
+    views () {
+      let menuItems = [
+        { name: 'Sign in', path: 'Signin', icon: 'fas fa-sign-in-alt' },
+        { name: 'Sign up', path: 'Signup', icon: 'fas fa-sign-out-alt' }
       ]
+      if (this.userIsAuthenticated) {
+        menuItems = [
+          { name: 'Meetups', path: 'Meetups', icon: 'fas fa-users' },
+          { name: 'Create Meetup', path: 'CreateMeetup', icon: 'fas fa-plus' },
+          { name: 'Profile', path: 'Profile', icon: 'fas fa-user' }
+        ]
+      }
+      return menuItems
+    },
+    userIsAuthenticated () {
+      return this.$store.getters.user !== null && this.$store.getters.user !== undefined
     }
   },
   created () {

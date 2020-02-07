@@ -88,6 +88,16 @@ export default {
     resetMeetup () {
       this.$refs.form.reset()
     }
+  },
+  computed: {
+
+  },
+  watch: {
+    user (value) {
+      if (value !== null && value !== undefined) {
+        this.$router.push('/home')
+      }
+    }
   }
 }
 </script>

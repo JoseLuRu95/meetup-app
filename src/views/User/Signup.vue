@@ -22,8 +22,8 @@
             label="Confirm password"
             required
           ></v-text-field>
-          <v-checkbox v-model="checkbox" :rules="[v => !!v || 'You must agree to continue!']" label="Did you become hollow?" required></v-checkbox>
-          <v-btn :disabled="!valid" color="success" class="mr-4" type="submit">
+          <v-checkbox v-model="checkbox" :rules="[v => !!v || 'You must agree to continue!']" label="Did you become hollow  ?" required></v-checkbox>
+          <v-btn :disabled="!valid" color="success" class="mr-4" :loading="loading" type="submit">
             Sign up
           </v-btn>
         </v-form>
@@ -56,13 +56,26 @@ export default {
   methods: {
     validate () {
       if (this.$refs.form.validate()) {
-
+        this.$store.dispatch('signUserUp', { email: this.email, password: this.password })
       }
     }
   },
   computed: {
     comparePassword () {
       return this.password !== this.confirmpassword ? 'Passwords do not match' : true
+    },
+    user () {
+      return this.$store.getters.user
+    },
+    loading () {
+      return this.$store.getters.loading
+    }
+  },
+  watch: {
+    user (value) {
+      if (value !== null && value !== undefined) {
+        this.$router.push('/home')
+      }
     }
   }
 }

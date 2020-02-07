@@ -29,6 +29,9 @@ export default {
     meetups () {
       return this.$store.getters.loadedMeetups
     }
+  },
+  created () {
+    this.$store.dispatch('fetchMeetups')
   }
 }
 </script>
