@@ -33,8 +33,10 @@ export default new Vuex.Store({
   },
   actions: {
     fetchMeetups ({ commit }) {
+      commit('setLoading', true)
       firebase.database().ref('meetups').once('value')
         .then(data => {
+          commit('setLoading', false)
           const fetchedMeetups = []
           const obj = data.val()
           for (let key in obj) {
@@ -50,7 +52,10 @@ export default new Vuex.Store({
             })
           }
           commit('setFetchedMeetups', fetchedMeetups)
-        }).catch(err => console.log(err))
+        }).catch(err => {
+          commit('setLoading', false)
+          console.log(err)
+        })
     },
     createMeetup ({ commit }, payload) {
       const meetup = {
@@ -102,6 +107,9 @@ export default new Vuex.Store({
           commit('setLoading', false)
           commit('setError', err)
         })
+    },
+    autoSignIn ({ commit }, payload) {
+      commit('createUser', { id: payload.uid, registerMeetups: [] })
     },
     clearError ({ commit }) {
       commit('clearError')

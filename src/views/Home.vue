@@ -32,7 +32,7 @@ export default {
       return this.$store.getters.featureMeetups
     },
     loading () {
-      return this.$store.getters.setLoading
+      return this.$store.getters.loading
     }
   },
   methods: {

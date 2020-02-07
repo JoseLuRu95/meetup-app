@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import AuthGuard from '@/router/auth-guard.js'
 
 Vue.use(VueRouter)
 
@@ -17,19 +18,20 @@ const routes = [
   {
     path: '/meetup/new',
     name: 'CreateMeetup',
-    component: () => import('@/views/Meetups/CreateMeetup.vue')
+    component: () => import('@/views/Meetups/CreateMeetup.vue'),
+    beforeEnter: AuthGuard
   },
   {
     path: '/meetups/:id',
     name: 'Meetup',
-    // Con esto se habilita que en propiedades se solicita la ID de la URL (Ver archivo Meetup.vue )
     props: true,
     component: () => import('@/views/Meetups/Meetup.vue')
   },
   {
     path: '/profile',
     name: 'Profile',
-    component: () => import('@/views/User/Profile.vue')
+    component: () => import('@/views/User/Profile.vue'),
+    beforeEnter: AuthGuard
   },
   {
     path: '/signin',

@@ -1,7 +1,8 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-col cols="12" md="8">
+      <v-progress-circular v-if="loading" :size="70" :width="7" color="primary" class="mt-10" indeterminate></v-progress-circular>
+      <v-col v-if="!loading" cols="12" md="8">
         <v-card flat color="rgb(25, 118, 210, 0.2)" v-for="m in meetups" :key="m.id" class="mt-4">
             <v-row class="px-4">
               <v-col cols="5" md="4">
@@ -28,14 +29,10 @@ export default {
   computed: {
     meetups () {
       return this.$store.getters.loadedMeetups
+    },
+    loading () {
+      return this.$store.getters.loading
     }
-  },
-  created () {
-    this.$store.dispatch('fetchMeetups')
   }
 }
 </script>
-
-<style scoped>
-
-</style>

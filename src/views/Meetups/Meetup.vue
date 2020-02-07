@@ -1,7 +1,8 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-col cols="12" md="8">
+      <v-progress-circular v-if="loading" :size="70" :width="7" color="primary" class="mt-10" indeterminate></v-progress-circular>
+      <v-col v-if="!loading" cols="12" md="8">
         <v-card>
           <v-card-title>
             <h1 class="title primary--text">{{ meetup.title }}</h1>
@@ -30,6 +31,9 @@ export default {
   computed: {
     meetup () {
       return this.$store.getters.loadedMeetup(this.id)
+    },
+    loading () {
+      return this.$store.getters.loading
     }
   }
 }
