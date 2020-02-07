@@ -83,6 +83,7 @@ export default {
           }
         }
         this.$store.dispatch('createMeetup', meetupData)
+        this.$router.push('/meetups')
       }
     },
     resetMeetup () {
@@ -93,11 +94,11 @@ export default {
 
   },
   watch: {
-    user (value) {
-      if (value !== null && value !== undefined) {
-        this.$router.push('/home')
-      }
-    }
+    // user (value) {
+    //   if (value !== null && value !== undefined) {
+    //     this.$router.push('/home')
+    //   }
+    // }
   }
 }
 </script>

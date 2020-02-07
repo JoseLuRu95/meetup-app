@@ -32,6 +32,7 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    // Fetching actions
     fetchMeetups ({ commit }) {
       commit('setLoading', true)
       firebase.database().ref('meetups').once('value')
@@ -48,7 +49,8 @@ export default new Vuex.Store({
               date: {
                 day: obj[key].date.day,
                 time: obj[key].date.time
-              }
+              },
+              creatorId: obj[key].creatorId
             })
           }
           commit('setFetchedMeetups', fetchedMeetups)
@@ -57,7 +59,7 @@ export default new Vuex.Store({
           console.log(err)
         })
     },
-    createMeetup ({ commit }, payload) {
+    createMeetup ({ commit, getters }, payload) {
       const meetup = {
         title: payload.title,
         location: payload.location,
@@ -66,7 +68,8 @@ export default new Vuex.Store({
         date: {
           day: payload.date.day,
           time: payload.date.time
-        }
+        },
+        creatorId: getters.user.id
       }
       firebase.database().ref('meetups').push(meetup)
         .then(data => {
@@ -108,6 +111,12 @@ export default new Vuex.Store({
           commit('setError', err)
         })
     },
+    logout ({ commit }) {
+      firebase.auth().signOut()
+        .then(() => commit('createUser', null))
+        .catch(err => console.log(err))
+    },
+    // Normal actions
     autoSignIn ({ commit }, payload) {
       commit('createUser', { id: payload.uid, registerMeetups: [] })
     },

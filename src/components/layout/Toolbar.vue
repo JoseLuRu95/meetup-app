@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-navigation-drawer app v-if="window.width < 960" v-model="showDrawer" mobile-break-point="960">
+    <v-navigation-drawer app v-if="window.width < 960 " v-model="showDrawer" mobile-break-point="960">
       <v-list elevation="1">
         <v-list-item link v-for="v in views" :key="v.name" :to="{ name: v.path }" pointer>
           <v-list-item-icon>
@@ -17,7 +17,7 @@
       <v-app-bar-nav-icon class="primary--text ml-1 d-md-none" @click.stop="showDrawer = !showDrawer"/>
       <v-toolbar-title><v-btn text :to="{ name: 'Home'}">Meeting App</v-btn> </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn v-for="v in views" :key="v.name" class="mx-1 d-none d-md-flex" color="secondary" text small :to="{ name: v.path }">
+      <v-btn v-for="v in views" :key="v.name" class="mx-1 d-none d-md-flex" color="secondary" text small :to="{ name: v.path }" @click="onLogout(v.command)">
         <v-icon class="mr-2">{{ v.icon }}</v-icon>
         {{ v.name }}
       </v-btn>
@@ -43,17 +43,18 @@ export default {
     // Define which views print when there is a user sign up or not
     views () {
       let menuItems = [
-        { name: 'Sign in', path: 'Signin', icon: 'fas fa-sign-in-alt' },
-        { name: 'Sign up', path: 'Signup', icon: 'fas fa-sign-out-alt' }
+        { name: 'Sign in', path: 'Signin', icon: 'fas fa-sign-in-alt', command: false },
+        { name: 'Sign up', path: 'Signup', icon: 'far fa-user', command: false },
+        { name: 'Meetups', path: 'Meetups', icon: 'fas fa-users', command: false },
+        { name: 'Create Meetup', path: 'CreateMeetup', icon: 'fas fa-plus', command: false },
+        { name: 'Profile', path: 'Profile', icon: 'fas fa-user', command: false },
+        { name: 'Logout', path: 'Signin', icon: 'fas fa-sign-out-alt', command: true }
       ]
       if (this.userIsAuthenticated) {
-        menuItems = [
-          { name: 'Meetups', path: 'Meetups', icon: 'fas fa-users' },
-          { name: 'Create Meetup', path: 'CreateMeetup', icon: 'fas fa-plus' },
-          { name: 'Profile', path: 'Profile', icon: 'fas fa-user' }
-        ]
+        return menuItems.slice(2, 6)
+      } else {
+        return menuItems.slice(0, 2)
       }
-      return menuItems
     },
     userIsAuthenticated () {
       return this.$store.getters.user !== null && this.$store.getters.user !== undefined
@@ -68,6 +69,11 @@ export default {
   methods: {
     handleResize () {
       this.window.width = window.innerWidth
+    },
+    onLogout (command) {
+      if (command) {
+        this.$store.dispatch('logout')
+      }
     }
   }
 }

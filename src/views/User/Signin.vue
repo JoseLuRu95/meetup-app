@@ -40,6 +40,7 @@ export default {
     validate () {
       if (this.$refs.form.validate()) {
         this.$store.dispatch('signUserIn', { email: this.email, password: this.password })
+        this.$router.push('/home')
       }
     }
   },
@@ -52,13 +53,6 @@ export default {
     },
     loading () {
       return this.$store.getters.loading
-    }
-  },
-  watch: {
-    user (value) {
-      if (value !== null && value !== undefined) {
-        this.$router.push('/home')
-      }
     }
   }
 }
