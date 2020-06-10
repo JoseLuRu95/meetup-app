@@ -1,104 +1,105 @@
 <template>
-  <v-container>
-    <v-row justify="center">
-      <v-col cols="11" md="10" lg="6">
-        <h1 class="headline primary--text">Create a new Meetup</h1>
-      </v-col>
-    </v-row>
-    <v-row justify="center">
-      <v-col cols="11" md="10" lg="6" class="elevation-4 px-12" >
-        <v-form v-model="valid" ref="form" @submit.prevent="validate">
-          <v-row>
-            <v-col cols="12">
-              <v-text-field name="title" label="Title" v-model="title" :rules="rules" required></v-text-field>
-            </v-col>
-          </v-row>
-          <v-row >
-            <v-col cols="12">
-              <v-text-field name="location" label="Location" prepend-icon="fas fa-map-marker" v-model="location" required></v-text-field>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12">
-              <!-- https://i0.wp.com/brainstomping.com/wp-content/uploads/2013/03/bioshock-infinite-columbia.jpg?ssl=1 -->
-              <v-text-field name="imgUrl" label="Image Url" prepend-icon="fas fa-image" v-model="imgUrl" :rules="rules" required></v-text-field>
-            </v-col>
-            <v-col v-if="imgUrl !== ''">
-              <v-img  :src="imgUrl"></v-img>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12">
-              <v-textarea name="description" label="Descrition" v-model="description" :rules="rules" prepend-inner-icon="fas fa-pencil-alt" required></v-textarea>
-            </v-col>
-          </v-row>
-          <v-row class="justify-space-around mb-6">
-              <v-date-picker v-model="day" color="primary lighten-1" ></v-date-picker>
-              <v-time-picker v-model="time" color="primary lighten-1"></v-time-picker>
-          </v-row>
-          <v-row>
-            <v-spacer></v-spacer>
-              <v-btn :disabled="!valid" color="success" class="mr-4" type="submit">
-                Create
-              </v-btn>
-              <v-btn color="error" class="mr-4" @click="resetMeetup">
-                Reset Form
-              </v-btn>
-          </v-row>
-        </v-form>
-      </v-col>
-    </v-row>
-  </v-container>
+  <v-card max-width="1200" elevation="4" class="mx-auto">
+    <v-card-title>
+      <h1 class="headline primary--text">Create a new Meetup</h1>
+    </v-card-title>
+    <v-card-text>
+      <v-form v-model="valid" ref="form">
+        <v-row>
+          <v-col cols="12" md="7">
+              <v-text-field label="Title" prepend-icon="fas fa-file-alt" v-model="payload.title" :rules="rules" outlined></v-text-field>
+              <v-text-field label="Location" prepend-icon="fas fa-map-marker" v-model="payload.location" :rules="rules" outlined></v-text-field>
+              <v-row dense class="pa-0">
+                <v-col cols="6">
+                  <v-menu v-model="menu1" transition="scale-transition" offset-y  max-width="290px"  min-width="290px" :close-on-content-click="false">
+                    <template v-slot:activator="{ on }">
+                        <v-text-field v-model="payload.day" outlined readonly prepend-icon="fas fa-calendar-alt" v-on="on" label="Fecha" :rules="rules"></v-text-field>
+                    </template>
+                    <v-date-picker v-model="payload.day">
+                    </v-date-picker>
+                  </v-menu>
+                </v-col>
+                <v-col cols="6">
+                  <v-menu v-model="menu2" transition="scale-transition" offset-y  max-width="290px"  min-width="290px" :close-on-content-click="false">
+                    <template v-slot:activator="{ on }">
+                        <v-text-field v-model="payload.time" outlined readonly prepend-icon="fas fa-clock" v-on="on" label="Hora" :rules="rules"></v-text-field>
+                    </template>
+                    <v-time-picker v-model="payload.time" >
+                    </v-time-picker>
+                  </v-menu>
+                </v-col>
+            </v-row>
+            <v-textarea area rows="2" label="Descrition" v-model="payload.description" :rules="rules" outlined></v-textarea>
+          </v-col>
+          <v-col cols="12" md="5">
+            <input class="d-none" ref="fileInput" type="file" @change="loadFile">
+            <v-card class="mx-auto" max-width="400">
+              <v-card-text class="d-flex justify-center">
+                <v-img class="my-2" v-if="image" contain :src="image"></v-img>
+                <v-icon size="200" v-else>fas fa-camera</v-icon>
+              </v-card-text>
+              <v-card-actions>
+                <v-btn small @click="onPickFile" color="info">Load Image</v-btn>
+                <v-btn small @click="image = null" color="warning">Delete Image</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-form>
+    </v-card-text>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn :disabled="!(valid && image)" color="success" class="mr-4" @click="validate">
+        Create
+      </v-btn>
+      <v-btn color="error" class="mr-4" @click="resetMeetup">
+        Reset Form
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
 export default {
   data () {
     return {
-      title: '',
-      location: '',
-      imgUrl: '',
-      description: '',
-      day: '',
-      time: '',
+      menu1: null,
+      menu2: null,
+      image: null,
+      payload: {},
       valid: false,
       rules: [
-        v => !!v || 'Required',
-        v => v.length >= 1 || 'Must be at least 10 characters'
+        v => !!v || 'Required'
       ]
     }
   },
   methods: {
   // Necessary for validation form
     validate () {
-      if (this.$refs.form.validate()) {
-        const meetupData = {
-          title: this.title,
-          location: this.location,
-          imgUrl: this.imgUrl,
-          description: this.description,
-          date: {
-            day: this.day,
-            time: this.time
-          }
-        }
-        this.$store.dispatch('createMeetup', meetupData)
-        this.$router.push('/meetups')
+      if (this.valid) {
+        this.$store.dispatch('createMeetup', this.payload)
       }
     },
     resetMeetup () {
       this.$refs.form.reset()
+      this.image = null
+    },
+    onPickFile () {
+      this.$refs.fileInput.click()
+    },
+    loadFile (event) {
+      const files = event.target.files
+      let filename = files[0].name
+      if (filename.lastIndexOf('') <= 0) {
+        return alert('Please add a valid file')
+      }
+      const fileReader = new FileReader()
+      fileReader.addEventListener('load', () => {
+        this.image = fileReader.result
+      })
+      fileReader.readAsDataURL(files[0])
+      this.payload.imgUrl = files[0]
     }
-  },
-  computed: {
-
-  },
-  watch: {
-    // user (value) {
-    //   if (value !== null && value !== undefined) {
-    //     this.$router.push('/home')
-    //   }
-    // }
   }
 }
 </script>

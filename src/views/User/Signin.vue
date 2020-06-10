@@ -40,7 +40,6 @@ export default {
     validate () {
       if (this.$refs.form.validate()) {
         this.$store.dispatch('signUserIn', { email: this.email, password: this.password })
-        this.$router.push('/home')
       }
     }
   },

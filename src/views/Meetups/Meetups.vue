@@ -11,7 +11,7 @@
               <v-col cols="7" md="8">
                 <v-container class="d-flex flex-column">
                   <div class="title">{{ m.title }}</div>
-                  <div class="subtitle-1">{{ m.date.day }} / {{m.date.time }}</div>
+                  <div class="subtitle-1">{{ m.day }} / {{m.time }}</div>
                 </v-container>
                 <v-card-actions>
                   <v-btn text :to="`/meetups/${m.id}`"><v-icon class="mr-4">fas fa-arrow-right</v-icon> View Meetup</v-btn>
@@ -33,6 +33,9 @@ export default {
     loading () {
       return this.$store.getters.loading
     }
+  },
+  mounted () {
+    this.$store.dispatch('fetchMeetups')
   }
 }
 </script>
