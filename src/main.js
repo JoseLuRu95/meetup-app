@@ -23,7 +23,6 @@ const configOptions = {
 }
 
 initializeApp(configOptions)
-console.log(auth)
 
 auth().onAuthStateChanged((user) => {
   if (user) {
