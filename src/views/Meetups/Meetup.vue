@@ -66,10 +66,7 @@ export default {
       return this.$store.getters.user.id === this.meetup.creatorId
     },
     userIsRegistered () {
-      if (this.loading) {
-        return this.meetup.users.some(m => { return m.id === this.$store.getters.user.id })
-      }
-      return null
+      return this.meetup.users.some(m => { return m.id === this.$store.getters.user.id })
     }
   },
   methods: {
@@ -102,7 +99,7 @@ export default {
         .catch((err) => { throw err })
     }
   },
-  mounted () {
+  created () {
     if (this.id) {
       this.$store.dispatch('fetchMeetupById', this.id)
     }

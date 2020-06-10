@@ -21,7 +21,7 @@
         <v-icon class="mr-2">{{ v.meta.icon }}</v-icon>
         {{ v.name }}
       </v-btn>
-      <v-btn v-if="userIsAuthenticated" class="mx-1 d-none d-md-flex" color="secondary" text small :to="{ name: 'Sign In' }" @click="onLogout">
+      <v-btn v-if="userIsAuthenticated" class="mx-1 d-none d-md-flex" color="secondary" text small @click="onLogout">
         <v-icon class="mr-2">fas fa-sign-out-alt</v-icon>
         Logout
       </v-btn>
@@ -48,9 +48,9 @@ export default {
     views () {
       let menuItems = [...this.$router.options.routes].filter(r => r.meta && r.meta.showOnDrawer === true)
       if (this.userIsAuthenticated) {
-        return menuItems.slice(0, 3)
+        return menuItems.slice(0, 2)
       } else {
-        return menuItems.slice(3, 5)
+        return menuItems.slice(2, 4)
       }
     },
     userIsAuthenticated () {

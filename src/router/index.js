@@ -1,10 +1,18 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import AuthGuard from '@/router/auth-guard.js'
+import store from '@/store'
+// import AuthGuard from '@/router/auth-guard.js'
 
 Vue.use(VueRouter)
 
 const routes = [
+  {
+    path: '/',
+    redirect: '/home',
+    meta: {
+      showOnDrawer: false
+    }
+  },
   {
     path: '/home',
     name: 'Home',
@@ -47,7 +55,7 @@ const routes = [
     name: 'Profile',
     meta: {
       icon: 'fas fa-user',
-      showOnDrawer: true
+      showOnDrawer: false
     },
     component: () => import('@/views/User/Profile.vue')
   },
@@ -83,10 +91,20 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.path === '/') {
-    AuthGuard()
+  if (store.getters.user) {
+    if (to.name === 'Sign In' || to.name === 'Sign Up') {
+      next({ name: 'Home' })
+    } else {
+      next()
+    }
   } else {
-    return next()
+    if (to.name === 'Sign In' || to.name === 'Sign Up') {
+      next()
+    } else if (!(to.name === 'Sign In' || to.name === 'Sign Up')) {
+      next({ name: 'Sign In' })
+    } else {
+      next()
+    }
   }
 })
 

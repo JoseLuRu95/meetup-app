@@ -1,16 +1,16 @@
-import firebase from 'firebase'
+import { auth } from 'firebase/app'
 import router from '@/router'
 
 export default {
   actions: {
     signUserUp ({ commit }, payload) {
       commit('setLoading', true)
-      firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
+      auth().createUserWithEmailAndPassword(payload.email, payload.password)
         .then(res => {
           const newUser = {
             id: res.user.uid
           }
-          router.push('/home')
+          router.push({ name: 'Home' })
           commit('createUser', newUser)
           commit('setLoading', false)
         }).catch(err => {
@@ -21,13 +21,13 @@ export default {
 
     signUserIn ({ commit }, payload) {
       commit('setLoading', true)
-      firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
+      auth().signInWithEmailAndPassword(payload.email, payload.password)
         .then(res => {
           const newUser = {
             id: res.user.uid
           }
           commit('createUser', newUser)
-          router.push('/home')
+          router.push({ name: 'Home' })
           commit('setLoading', false)
         }).catch(err => {
           commit('setLoading', false)
@@ -36,8 +36,11 @@ export default {
     },
 
     logout ({ commit }) {
-      firebase.auth().signOut()
-        .then(() => commit('createUser', null))
+      auth().signOut()
+        .then(() => {
+          commit('createUser', null)
+          router.push({ name: 'Sign In' })
+        })
         .catch(err => {
           commit('setLoading', false)
           throw err
