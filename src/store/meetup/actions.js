@@ -16,8 +16,8 @@ export default {
           commit('setLoading', false)
           commit('setFetchedMeetups', fetchedMeetups)
         }).catch(err => {
-          console.log(err)
           commit('setLoading', false)
+          throw err
         })
     },
 
@@ -28,8 +28,8 @@ export default {
           commit('fetchMeetup', meetupTransformer.fetch(data.val()))
           commit('setLoading', false)
         }).catch(err => {
-          console.log(err)
           commit('setLoading', false)
+          throw err
         })
     },
 
@@ -55,8 +55,8 @@ export default {
           router.push('/meetups')
         })
         .catch(err => {
-          console.log(err)
           commit('setLoading', false)
+          throw err
         })
     },
 
@@ -81,8 +81,8 @@ export default {
           router.push('/meetups')
         })
         .catch(err => {
-          console.log(err)
           commit('setLoading', false)
+          throw err
         })
     }
   }

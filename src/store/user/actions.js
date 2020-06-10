@@ -15,7 +15,7 @@ export default {
           commit('setLoading', false)
         }).catch(err => {
           commit('setLoading', false)
-          console.log(err)
+          throw err
         })
     },
 
@@ -30,15 +30,18 @@ export default {
           router.push('/home')
           commit('setLoading', false)
         }).catch(err => {
-          console.log(err)
           commit('setLoading', false)
+          throw err
         })
     },
 
     logout ({ commit }) {
       firebase.auth().signOut()
         .then(() => commit('createUser', null))
-        .catch(err => console.log(err))
+        .catch(err => {
+          commit('setLoading', false)
+          throw err
+        })
     },
     autoSignIn ({ commit }, payload) {
       commit('createUser', { id: payload.uid })
