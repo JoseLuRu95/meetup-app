@@ -2,7 +2,7 @@
   <v-dialog persistent v-model="dialog" @click:outside="closeDialog" max-width="1200">
     <v-card max-width="1200" class="mx-auto">
       <v-card-title>
-        <h1 class="headline primary--text">Create a new Meetup</h1>
+        <h1 class="headline primary--text">Edit Meetup</h1>
       </v-card-title>
       <v-card-text>
         <v-form v-model="valid" ref="form">
@@ -50,7 +50,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn :disabled="!(valid && image)" color="success" class="mr-4"  @click="validate">
+        <v-btn :disabled="!(valid && image)"  :loading="loading" color="success" class="mr-4"  @click="validate">
           Update
         </v-btn>
         <v-btn color="error" class="mr-4" @click="resetMeetup">
@@ -87,6 +87,17 @@ export default {
       ]
     }
   },
+  computed: {
+    user () {
+      return this.$store.getters.user
+    },
+    error () {
+      return this.$store.getters.error
+    },
+    loading () {
+      return this.$store.getters.loading
+    }
+  },
   methods: {
     validate () {
       if (this.valid) {
@@ -94,7 +105,8 @@ export default {
       }
     },
     resetMeetup () {
-      this.$refs.form.reset()
+      this.payload = { ...this.meetup }
+      this.image = this.meetup.imgUrl
     },
     onPickFile () {
       this.$refs.fileInput.click()

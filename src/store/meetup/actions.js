@@ -4,33 +4,39 @@ import meetupTransformer from '@/transformers/meetup.js'
 
 export default {
   actions: {
-    fetchMeetups ({ commit }) {
-      commit('setLoading', true)
-      database().ref('meetups/').once('value')
-        .then(data => {
-          const fetchedMeetups = []
-          const obj = data.val()
-          for (let key in obj) {
-            fetchedMeetups.push({ id: key, ...meetupTransformer.fetch(obj[key]) })
-          }
-          commit('setLoading', false)
-          commit('setFetchedMeetups', fetchedMeetups)
-        }).catch(err => {
-          commit('setLoading', false)
-          throw err
-        })
+    fetchMeetups ({ commit, getters }) {
+      const user = getters.user
+      if (user) {
+        commit('setLoading', true)
+        database().ref('meetups/').once('value')
+          .then(data => {
+            const fetchedMeetups = []
+            const obj = data.val()
+            for (let key in obj) {
+              fetchedMeetups.push({ id: key, ...meetupTransformer.fetch(obj[key]) })
+            }
+            commit('setLoading', false)
+            commit('setFetchedMeetups', fetchedMeetups)
+          }).catch(err => {
+            commit('setLoading', false)
+            throw err
+          })
+      }
     },
 
-    fetchMeetupById ({ commit }, id) {
-      commit('setLoading', true)
-      database().ref('meetups/' + id).once('value')
-        .then(data => {
-          commit('fetchMeetup', meetupTransformer.fetch(data.val()))
-          commit('setLoading', false)
-        }).catch(err => {
-          commit('setLoading', false)
-          throw err
-        })
+    fetchMeetupById ({ commit, getters }, id) {
+      const user = getters.user
+      if (user) {
+        commit('setLoading', true)
+        database().ref('meetups/' + id).once('value')
+          .then(data => {
+            commit('fetchMeetup', meetupTransformer.fetch(data.val()))
+            commit('setLoading', false)
+          }).catch(err => {
+            commit('setLoading', false)
+            throw err
+          })
+      }
     },
 
     createMeetup ({ commit, getters }, payload) {

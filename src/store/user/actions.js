@@ -3,46 +3,53 @@ import router from '@/router'
 
 export default {
   actions: {
-    signUserUp ({ commit }, payload) {
+    signUserUp ({ commit, getters }, payload) {
       commit('setLoading', true)
-      auth().createUserWithEmailAndPassword(payload.email, payload.password)
+      auth()
+        .createUserWithEmailAndPassword(payload.email, payload.password)
         .then(res => {
           const newUser = {
             id: res.user.uid
           }
-          router.push({ name: 'Home' })
           commit('createUser', newUser)
-          commit('setLoading', false)
-        }).catch(err => {
-          commit('setLoading', false)
+        })
+        .catch(err => {
+          commit('setError', err)
           throw err
+        })
+        .finally(() => {
+          commit('setLoading', false)
         })
     },
 
     signUserIn ({ commit }, payload) {
       commit('setLoading', true)
-      auth().signInWithEmailAndPassword(payload.email, payload.password)
+      auth()
+        .signInWithEmailAndPassword(payload.email, payload.password)
         .then(res => {
           const newUser = {
             id: res.user.uid
           }
           commit('createUser', newUser)
-          router.push({ name: 'Home' })
-          commit('setLoading', false)
-        }).catch(err => {
-          commit('setLoading', false)
+        })
+        .catch(err => {
+          commit('setError', err)
           throw err
+        })
+        .finally(() => {
+          commit('setLoading', false)
         })
     },
 
     logout ({ commit }) {
-      auth().signOut()
+      auth()
+        .signOut()
         .then(() => {
           commit('createUser', null)
           router.push({ name: 'Sign In' })
         })
         .catch(err => {
-          commit('setLoading', false)
+          commit('setError', err)
           throw err
         })
     },

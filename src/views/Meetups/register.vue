@@ -2,14 +2,14 @@
   <v-dialog persistent v-model="dialog" @click:outside="closeDialog" max-width="600px">
         <v-card max-width="600" elevation="4" class="mx-auto">
         <v-card-title>
-          <h1 class="headline primary--text">Register for meetup?</h1>
+          <h1 class="headline primary--text">Do you want to register for meetup?</h1>
         </v-card-title>
       <v-card-text>
         <p>You can change your mind later on</p>
       </v-card-text>
       <v-card-actions>
-        <v-btn @click="closeDialog">Cancel</v-btn>
-        <v-btn @click="register">Accept</v-btn>
+        <v-btn class="warning" @click="closeDialog">Cancel</v-btn>
+        <v-btn class="success" @click="register">Accept</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

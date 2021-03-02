@@ -19,6 +19,21 @@
               </v-col>
             </v-row>
         </v-card>
+        <v-card v-if="!meetups.length && !loading" flat color="rgb(25, 118, 210, 0.2)" class="mt-4">
+            <v-row class="px-4"
+                style="height: 300px"
+                align="center"
+                justify="center">
+                <div>
+                  <p class="display-2">
+                    There are no meetups
+                  </p>
+                  <p class="display-1">
+                    Create a new one!
+                  </p>
+                </div>
+            </v-row>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>

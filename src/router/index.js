@@ -69,13 +69,13 @@ const routes = [
     component: () => import('@/views/User/Signin.vue')
   },
   {
-    path: '/signup',
-    name: 'Sign Up',
+    path: '/login',
+    name: 'Log In',
     meta: {
       icon: 'far fa-user',
       showOnDrawer: true
     },
-    component: () => import('@/views/User/Signup.vue')
+    component: () => import('@/views/User/Login.vue')
   },
   {
     path: '*',
@@ -91,17 +91,16 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (store.getters.user) {
-    if (to.name === 'Sign In' || to.name === 'Sign Up') {
+  const aunthenticated = store.getters.user
+  if (aunthenticated) {
+    if (to.name === 'Sign In' || to.name === 'Log In') {
       next({ name: 'Home' })
     } else {
       next()
     }
   } else {
-    if (to.name === 'Sign In' || to.name === 'Sign Up') {
-      next()
-    } else if (!(to.name === 'Sign In' || to.name === 'Sign Up')) {
-      next({ name: 'Sign In' })
+    if (!(to.name === 'Sign In' || to.name === 'Log In')) {
+      next({ name: 'Log In' })
     } else {
       next()
     }

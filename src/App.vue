@@ -1,11 +1,13 @@
 <template>
   <v-app>
     <Toolbar/>
-    <v-content>
-      <v-container>
-        <router-view/>
-      </v-container>
-    </v-content>
+      <v-main>
+        <v-container>
+          <v-fade-transition mode="out-in">
+            <router-view/>
+          </v-fade-transition>
+        </v-container>
+      </v-main>
   </v-app>
 </template>
 

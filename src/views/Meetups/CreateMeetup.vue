@@ -5,6 +5,7 @@
     </v-card-title>
     <v-card-text>
       <v-form v-model="valid" ref="form">
+        <app-alert v-if="error" :text="error.message"/>
         <v-row>
           <v-col cols="12" md="7">
               <v-text-field label="Title" prepend-icon="fas fa-file-alt" v-model="payload.title" :rules="rules" outlined></v-text-field>
@@ -49,7 +50,7 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn :disabled="!(valid && image)" color="success" class="mr-4" @click="validate">
+      <v-btn :disabled="!(valid && image)" :loading="loading" color="success" class="mr-4" @click="validate">
         Create
       </v-btn>
       <v-btn color="error" class="mr-4" @click="resetMeetup">
@@ -71,6 +72,17 @@ export default {
       rules: [
         v => !!v || 'Required'
       ]
+    }
+  },
+  computed: {
+    user () {
+      return this.$store.getters.user
+    },
+    error () {
+      return this.$store.getters.error
+    },
+    loading () {
+      return this.$store.getters.loading
     }
   },
   methods: {
